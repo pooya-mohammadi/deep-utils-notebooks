@@ -6,7 +6,7 @@ For more information about deep-utils please check the link below:
 
 deep-utils: [https://github.com/pooya-mohammadi/deep_utils](https://github.com/pooya-mohammadi/deep_utils)
 
-[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml)
+[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml)
 
 <div id="top"></div>
 <!-- PROJECT LOGO -->
@@ -24,7 +24,7 @@ deep-utils: [https://github.com/pooya-mohammadi/deep_utils](https://github.com/p
 </div>
 
 This repository contains the most frequently used deep learning models and functions. **Deep_Utils** is still under
-heavy development, so take into consideration that many features may change in the future. Install the latest version using pypi.
+heavy development, so take into consideration that many features may change in the future and make sure to install the latest version using pypi.
 
 ## Table of contents
 
@@ -32,14 +32,18 @@ heavy development, so take into consideration that many features may change in t
 * [Installation](#installation)
 * [Vision](#vision)
     * [Face Detection](#face-detection)
-        * [MTCNN](#mtcnn)
+      * [MTCNN](#mtcnn)
+    * [Object Detection](#object-detection)
+      * [yolov5](#yolov5)
 * [Utils](#utils)
   * [DictNamedTuple](#dictnametuple)
+* [Tests](#tests)
 * [Contributing](#Contributing)
 * [Licence](#Licence)
 * [Collaborators](#Collaborators)
 * [Contact](#Contact)
 * [References](#references)
+* [Citation](#citation)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -57,7 +61,7 @@ So, we created this improved one. This toolkit minimizes the deep learning teams
 ## Installation:
 ```bash
     # pip: recommended
-    pip install -U deep_utils
+    pip install -U deep-utils
     
     # repository
     pip install git+https://github.com/pooya-mohammadi/deep_utils.git
@@ -66,6 +70,17 @@ So, we created this improved one. This toolkit minimizes the deep learning teams
     git clone https://github.com/pooya-mohammadi/deep_utils.git deep_utils
     pip install -U deep_utils 
 ```
+
+### Installation types:
+1. minimal installation:
+   1. `pip install deep-utils`
+2. minial vision installation
+   1. `pip install deep-utils[cv]`
+3. tensorflow installation:
+   1. `pip install deep-utils[tf]`
+4. torch installation:
+   1. `pip install deep-utils[torch]`
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Vision
@@ -78,14 +93,14 @@ We support two subsets of models in Computer Vision.
 We have gathered a rich collection of face detection models which are mentioned in the following list. If you notice any model missing, feel free to open an issue or create a pull request.
 
 ### MTCNN
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hooshvare/parsbert/blob/master/notebooks/Taaghche_Sentiment_Analysis.ipynb)
-1. After Installing the library, import deep_utils and instantiate models:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/Face/blob/master/_02_mtcnn_tf1/deep_utils_mtcnn.ipynb)
+1. After Installing the library, import deep_utils and instantiate the model:
 
 ```python
 from deep_utils import face_detector_loader, list_face_detection_models
     
 # This line will print all the available models 
-list_face_detection_models()
+print(list_face_detection_models())
    
 # Create a face detection model using MTCNN-Torch
 face_detector = face_detector_loader('MTCNNTorchFaceDetector')
@@ -97,7 +112,8 @@ import cv2
 from deep_utils import show_destroy_cv2, Box, download_file, Point
 
 # Download an image
-download_file("https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-stars.jpg")
+download_file(
+    "https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-stars.jpg")
 
 # Load an image
 img = cv2.imread("movie-stars.jpg")
@@ -113,7 +129,7 @@ img = Box.put_box(img, result.boxes)
 
 # Draw the landmarks
 for landmarks in result.landmarks:
-    Point.put_point(img, list(landmarks.values()), radius=3)
+    Point.put_point(img, list(landmarks.logs()), radius=3)
 
 # show the results
 show_destroy_cv2(img)
@@ -121,6 +137,66 @@ show_destroy_cv2(img)
 The result:
 
 <img src="https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-starts-mtccn-torch.jpg" alt="Logo" >
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Object Detection
+
+### YoloV5
+YoloV5 by far is one of the top-5 most used object detection models. The training process is straight forward and the results
+are spectacular. However, using a trained model can be very challenging because of several files that yolov5's model needs in production. 
+To tackle this issue we have wrapped yolov5's models in a simple module whose usage will be illustrated in the following section.<br/>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/vision/object-detection/yolov5/deep-utils-yolov5.ipynb)
+1. After Installing the library, import deep_utils and instantiate the model:
+
+```commandline
+# import the model
+from deep_utils import YOLOV5TorchObjectDetector
+# instantiate with the default parameters
+yolov5 = YOLOV5TorchObjectDetector()
+# print the parameters
+print(yolov5)
+```
+2. Download and visualize the test image
+```commandline
+import cv2
+from deep_utils import Box, download_file, Point, show_destroy_cv2
+from PIL import Image
+
+# Download an image
+download_file("https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog.jpg")
+
+# Load an image
+base_image = cv2.imread("dog.jpg")
+
+# pil.Image is used for visualization
+Image.fromarray(base_image[...,::-1]) # convert to rgb
+# visualize using oepncv
+# show_destroy_cv2(base_image) 
+```
+The result:
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog.jpg" alt="Logo" >
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+3. Detect and visualize Objects
+```commandline
+# Detect the objects
+# the image is opened by cv2 which results to a BGR image. Therefore the `is_rgb` is set to `False` 
+result = yolov5.detect_objects(base_image, is_rgb=False, confidence=0.5)
+
+# Draw detected boxes on the image.
+img = Box.put_box_text(base_image,
+                       box=result.boxes,
+                       label=[f"{c_n} {c}" for c_n, c in zip(result.class_names, result.confidences)])
+
+# pil.Image is used for visualization
+Image.fromarray(img[...,::-1]) # convert to rgb
+# visualize using oepncv
+# show_destroy_cv2(img)
+```
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog_yolov5.jpg" alt="Logo" >
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Utils
@@ -157,6 +233,15 @@ lastname:  mohammadi
 lastname:  mohammadi
 ```
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- Tests -->
+
+## Tests
+Tests are done for python 3.8 and 3.9. Deep-Utils will probably run without any errors on lower versions as well.
+
+**Note**: Model tests are done on CPU devices provided by GitHub Actions. GPU based models are tested manually by the authors.
+<p align="right">(<a href="#top">back to top</a>)</p>
 <!-- CONTRIBUTING -->
 
 ## Contributing
@@ -164,7 +249,7 @@ lastname:  mohammadi
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 If you have a suggestion that would make this toolkit enhanced, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+Don't forget to give the project a ⭐️! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -231,6 +316,7 @@ The LICENSE of each model is located inside its corresponding directory.
     </td>
   </tr>
 </table>
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
@@ -250,5 +336,19 @@ Project Link: [https://github.com/pooya-mohammadi/deep_utils](https://github.com
 
 1. Tim Esler's facenet-pytorch
    repo: [https://github.com/timesler/facenet-pytorch](https://github.com/timesler/facenet-pytorch)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Citation
+
+Please cite deep-utils if it helps your research. You can use the following BibTeX entry:
+```
+@misc{deep_utils,
+	title = {deep_utils},
+	author = {Mohammadi Kazaj, Pooya},
+	howpublished = {\url{github.com/pooya-mohammadi/deep_utils}},
+	year = {2021}
+}
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
