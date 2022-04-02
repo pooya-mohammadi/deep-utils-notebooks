@@ -130,3 +130,5 @@ dmypy.json
 .pyre/
 *.pt
 *.pth
+
+*.DS_Store
